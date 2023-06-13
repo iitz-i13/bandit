@@ -14,7 +14,8 @@ class BanditSimulator(object):
         self.n_sims = n_sims
         self.n_steps = n_steps
         self.n_arms = n_arms
-        self.output_folder = os.path.join(os.path.dirname(__file__), 'csv', datetime.now().strftime("%Y%m%d%H%M"))
+        self.daytime = datetime.now().strftime("%Y%m%d%H%M")
+        self.result_dir = os.path.join(os.path.dirname(__file__), 'csv', self.daytime)
         
         self.select = np.zeros((self.n_sims, self.n_steps))
         self.regret = np.zeros((self.n_sims, self.n_steps))
@@ -22,11 +23,21 @@ class BanditSimulator(object):
         self.accuracy = np.zeros((self.n_sims, self.n_steps))
         self.total_reward = np.zeros((self.n_sims, self.n_steps))
         
-    def run(self):
-        os.makedirs(self.output_folder, exist_ok=True)
+    def log_data(self):
+        f = open(self.result_dir + '/log.txt', mode='w', encoding='utf-8')
+        f.write(f'policy_name: {self.policy_name}\n')
+        f.write(f'dataset inf: \n')
+        f.write(f'csv: {self.daytime}\n')
+        f.write(f'n_arms: {self.n_arms}\n')
+        f.write(f'sim: {self.n_sims}, step: {self.n_steps}\n')
+        f.close()
         
+    def run(self):
+        os.makedirs(self.result_dir, exist_ok=True)
+        self.policy_name = []
         for policy in self.policy_list:
             print(policy.name)
+            self.policy_name.append(policy.name)
             for sim in range(self.n_sims):
                 self.env = BaseBandit(self.n_arms)
                 self.probs = self.env.probs
@@ -60,6 +71,7 @@ class BanditSimulator(object):
                     self.total_reward[sim, step] = np.sum(self.reward[sim, :step+1])
 
             self.save_data(policy)
+        self.log_data()
 
     def save_data(self, policy):
         data = {
@@ -70,5 +82,5 @@ class BanditSimulator(object):
         }
         df = pd.DataFrame(data)
         filename = f"{policy.name}.csv"
-        filepath = os.path.join(self.output_folder, filename)
+        filepath = os.path.join(self.result_dir, filename)
         df.to_csv(filepath, index=False)
