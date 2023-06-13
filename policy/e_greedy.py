@@ -7,7 +7,7 @@ class E_greedy(object):
         if self.eps == 1:
             self.name = 'Greedy'
         else:
-            self.name = 'ε-greedy ε=' + str(self.eps)
+            self.name = 'ε-greedy'
         
     def initialize(self):
         self.Q = np.zeros(self.n_arms) # 各腕の行動価値
