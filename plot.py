@@ -3,27 +3,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 import sys
+import shutil
 
-def create_results_folder():
-    # 現在の日時を取得してフォルダ名とする
-    now = datetime.now()
-    folder_name = now.strftime('%Y%m%d%H%M')
-
-    # 結果保存用のフォルダを作成
-    os.makedirs(os.path.join('png', folder_name))
-
-    return folder_name
-
-def plot_results(csv_folder_path):
-    output_folder_path = create_results_folder()
-
+def plot_results(csv_dir_path):
     # フォルダ内のCSVファイルを読み込む
-    files = os.listdir(csv_folder_path)
+    files = os.listdir(csv_dir_path)
     policy_data = {}
     for file in files:
         if file.endswith('.csv'):
             policy_name = file.split('.')[0]
-            file_path = os.path.join(csv_folder_path, file)
+            file_path = os.path.join(csv_dir_path, file)
             df = pd.read_csv(file_path)
             policy_data[policy_name] = df
 
@@ -35,7 +24,7 @@ def plot_results(csv_folder_path):
     plt.xlabel('Step')
     plt.ylabel('Reward')
     plt.legend()
-    plt.savefig(os.path.join('png', output_folder_path, 'reward.png'))
+    plt.savefig(os.path.join(results_dir, 'reward.png'))
     plt.close()
 
     # Regretのプロットと保存
@@ -46,7 +35,7 @@ def plot_results(csv_folder_path):
     plt.xlabel('Step')
     plt.ylabel('Regret')
     plt.legend()
-    plt.savefig(os.path.join('png', output_folder_path, 'regret.png'))
+    plt.savefig(os.path.join(results_dir, 'regret.png'))
     plt.close()
 
     # Accuracyのプロットと保存
@@ -57,11 +46,14 @@ def plot_results(csv_folder_path):
     plt.xlabel('Step')
     plt.ylabel('Accuracy')
     plt.legend()
-    plt.savefig(os.path.join('png', output_folder_path, 'accuracy.png'))
+    plt.savefig(os.path.join(results_dir, 'accuracy.png'))
     plt.close()
 
+time_now = datetime.now()
+results_dir = 'png/{0:%Y%m%d%H%M}/'.format(time_now)
+os.makedirs(results_dir, exist_ok=True)
 # 引数からCSVフォルダのパスを取得
-csv_folder_path = sys.argv[1]
-
+csv_dir_path = sys.argv[1]
+shutil.copyfile(csv_dir_path+"/"+"log.txt", results_dir + "/log.txt")
 # 結果をプロットし、PNGファイルとして保存する
-plot_results(csv_folder_path)
+plot_results(csv_dir_path)
