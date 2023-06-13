@@ -4,7 +4,7 @@ class E_greedy(object):
     def __init__(self, n_arms, eps):
         self.eps = eps
         self.n_arms = n_arms # 腕の数
-        if self.eps == 1:
+        if self.eps == 0.0:
             self.name = 'Greedy'
         else:
             self.name = 'ε-greedy'
