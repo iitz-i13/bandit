@@ -1,6 +1,12 @@
 # multi-armed bandit
 多腕バンディット問題の実装
 
+# Requirements
+- python 3.11.3
+- numpy 1.23.5
+- pandas 2.0.0
+- matplotlib 3.7.1
+
 ## 実装済みのアルゴリズム
 
 - (ε)Greedy ( ε は調整可能)
@@ -48,6 +54,3 @@ policy_list = [E_greedy(n_arms, eps=0.1),
 			   UCB1(n_arms), 
 			   TS(n_arms)]
 ```
-
-## 注意事項
-基本的な実装しかしてないため, 必ずしも正しいという保証はありません.
